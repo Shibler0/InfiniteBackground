@@ -29,7 +29,7 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 
 
-fun Modifier.spaceIt(): Modifier = composed {
+fun Modifier.spaceIt(shapeSize : Float = 10f): Modifier = composed {
 
     val transition = rememberInfiniteTransition(label = "")
 
@@ -70,13 +70,13 @@ fun Modifier.spaceIt(): Modifier = composed {
             composableSize = it
         }
         .drawBehind {
-            drawInfinitePattern(Offset(transitionX, transitionY))
+            drawInfinitePattern(Offset(transitionX, transitionY), shapeSize)
         }
 }
 
 //FUNCTION IS LIMITED TO A 300.DP SIZE COMPOSE
 @Composable
-fun InfiniteTransition(modifier: Modifier = Modifier) {
+fun InfiniteTransition(modifier: Modifier = Modifier, shapeSize : Float = 10f) {
 
 
     val transition = rememberInfiniteTransition(label = "")
@@ -117,55 +117,32 @@ fun InfiniteTransition(modifier: Modifier = Modifier) {
         .fillMaxSize()
         .clip(RoundedCornerShape(10.dp))
         .then(modifier)) {
-        drawInfinitePattern(Offset(transitionX, transitionY))
+        drawInfinitePattern(Offset(transitionX, transitionY), shapeSize)
     }
 
 }
 
-fun DrawScope.drawInfinitePattern(newOffset : Offset) {
+fun DrawScope.drawInfinitePattern(newOffset : Offset, shapeSize:Float) {
 
-    val shapeSize = size.width/30
+    val shapeSize = size.width / shapeSize
     val spacing = shapeSize * 1.2f
 
-    for(x in 0 until size.width.toInt() step spacing.toInt()) {
-        for(y in 0 until size.height.toInt() step spacing.toInt()) {
+    val wrappedOffsetX = newOffset.x % spacing
+    val wrappedOffsetY = newOffset.y % spacing
 
-            val nextOffset = Offset(x.toFloat() + newOffset.x , y.toFloat() + newOffset.y)
-
-            val previousOffset = Offset(x.toFloat() - size.width + newOffset.x, y.toFloat() + newOffset.y)
-
-            val nextOffset2 = Offset(x.toFloat() +newOffset.x, y.toFloat() + size.height + newOffset.y)
-
-            val previousOffset2 = Offset(x.toFloat() - size.width + newOffset.x , y.toFloat() + size.height + newOffset.y)
-
+    var x = -spacing + wrappedOffsetX
+    while (x < size.width + spacing) {
+        var y = -spacing + wrappedOffsetY
+        while (y < size.height + spacing) {
             drawCircle(
                 color = Color.White,
-                center = previousOffset,
+                center = Offset(x, y),
                 radius = shapeSize * 0.4f,
                 style = Stroke(width = 1.dp.toPx())
             )
-
-            drawCircle(
-                color = Color.White,
-                center = nextOffset,
-                radius = shapeSize * 0.4f,
-                style = Stroke(width = 1.dp.toPx())
-            )
-
-            drawCircle(
-                color = Color.White,
-                center = previousOffset2,
-                radius = shapeSize * 0.4f,
-                style = Stroke(width = 1.dp.toPx())
-            )
-
-            drawCircle(
-                color = Color.White,
-                center = nextOffset2,
-                radius = shapeSize * 0.4f,
-                style = Stroke(width = 1.dp.toPx())
-            )
+            y += spacing
         }
+        x += spacing
     }
 
 }
