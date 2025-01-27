@@ -51,7 +51,7 @@ afterEvaluate {
                 from(components["release"])
                 groupId = "com.github.Shibler0"
                 artifactId = "InfiniteBackground"
-                version = "0.9"
+                version = "0.9.2"
             }
         }
     }
